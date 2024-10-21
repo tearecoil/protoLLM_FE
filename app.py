@@ -1,18 +1,31 @@
 from PyPDF2 import PdfReader
+from models.current_user import current_User
 
 import streamlit as st 
 import requests
 import os
 
+
 def main():
+
+    #Initialize
+    cur_user = current_User
     st.title("OPENAI THEME - PROTOTYPE LLM")
     st.sidebar.title('Files Submitted')
+
+    #Set username (update later)
+    cur_user.name = 'admin'
+    send_user_info = {'name': cur_user.name}
+    requests.post('http://127.0.0.1:8000/setuser/', json=send_user_info)
+
+    #Upload file
     pdf = st.sidebar.file_uploader("UPLOAD YOUR PDF FILE", type="pdf")
     #Process if there's a file uploaded (first version only works with 1 PDF)
     if pdf:
         files = {'file': pdf}
-        response = requests.post('http://127.0.0.1:8000/uploadfile/', files=files)
+        response = requests.post('http://127.0.0.1:8000/uploadfile/', files=files,)
         print(response.json()["message"])
+
         #If that PDF was succesfully uploaded
         if response.json()["message"] == "Successfully uploaded":
             query = st.text_input("Ask question to PDF...")
@@ -23,6 +36,7 @@ def main():
                 cancel_button = st.button("Cancel")
             if cancel_button:
                 st.stop()
+
             #A query was sent
             if submit_button:
                 if query: 
