@@ -25,6 +25,7 @@ def main():
         files = {'file': pdf}
         response = requests.post('http://127.0.0.1:8000/uploadfile/', files=files,)
         print(response.json()["message"])
+        
 
         #If that PDF was succesfully uploaded
         if response.json()["message"] == "Successfully uploaded":
